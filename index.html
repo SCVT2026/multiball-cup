@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Multiball Cup</title>
+<style>
+body{background:#0d47a1;color:#fff;font-family:Arial,sans-serif;text-align:center;padding:15px}
+img{width:220px;height:220px;object-fit:contain;background:#fff;border-radius:12px}
+button{padding:10px 15px;margin:4px;border:none;border-radius:8px}
+.score{font-size:2rem;font-weight:bold}
+#value{font-size:2rem;color:#ffd54f}
+#log{max-width:700px;margin:auto;text-align:left;height:180px;overflow:auto;background:rgba(255,255,255,.1);padding:10px}
+</style>
+</head>
+<body>
+<h1>🏆 MULTIBALL CUP</h1>
+<img id="img" src="assets/calcio4.png">
+<h2 id="ball">Pallone calcio n.4</h2>
+<div id="value">Gol = 1 punto</div>
+
+<h3>Tempo partita: <span id="matchDisplay">15:00</span></h3>
+<h3>Prossimo cambio: <span id="changeDisplay">03:00</span></h3>
+
+<div class="score">🔵 <span id="blu">0</span> - <span id="rossi">0</span> 🔴</div>
+
+<button onclick="goal('blu')">⚽ GOL BLU</button>
+<button onclick="goal('rossi')">⚽ GOL ROSSI</button>
+<button onclick="drawNow()">🎲 ESTRAI SUBITO</button><br>
+<button onclick="startGame()">▶️ AVVIA</button>
+<button onclick="stopGame()">⏹️ STOP</button>
+
+<h3>Storico eventi</h3>
+<div id="log"></div>
+
+<script>
+const balls=[
+{name:"Pallone calcio n.4",v:1,img:"assets/calcio4.png"},
+{name:"Pallone calcio n.5",v:1,img:"assets/calcio5.jpg"},
+{name:"Mini-pallone",v:2,img:"assets/mini.jpg"},
+{name:"Palla rugby",v:3,img:"assets/rugby.jpg"},
+{name:"Super Santos",v:4,img:"assets/santos.jpg"},
+{name:"Palla gigante",v:5,img:"assets/gigante.jpg"}
+];
+let current=0,last=0,matchTime=900,changeTime=180,t=null,b=0,r=0;
+
+function say(x){if(window.speechSynthesis){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(x));}}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+function addLog(x){document.getElementById('log').innerHTML=x+'<br>'+document.getElementById('log').innerHTML;}
+
+function setBall(i){
+ current=i;
+ const p=balls[i];
+ img.src=p.img;
+ ball.textContent=p.name;
+ value.textContent='Gol = '+p.v+' punti';
+ say('Nuovo pallone. '+p.name+'. I gol valgono '+p.v+' punti');
+}
+
+function randomBall(){
+ let i;
+ do{i=Math.floor(Math.random()*balls.length);}while(i===last);
+ last=i;
+ setBall(i);
+}
+
+function goal(team){
+ const pts=balls[current].v;
+ if(team==='blu'){b+=pts;blu.textContent=b;}
+ else{r+=pts;rossi.textContent=r;}
+ addLog('Gol '+team.toUpperCase()+' +'+pts);
+}
+
+function drawNow(){randomBall();changeTime=180;}
+
+function tick(){
+ matchDisplay.textContent=fmt(matchTime);
+ changeDisplay.textContent=fmt(changeTime);
+
+ if(changeTime<=0){randomBall();changeTime=180;}
+
+ if(matchTime<=0){
+   clearInterval(t);
+   let w='PAREGGIO';
+   if(b>r) w='BLU';
+   if(r>b) w='ROSSI';
+   alert('🏁 Fine partita\nBLU '+b+' - '+r+' ROSSI\nVince '+w);
+   return;
+ }
+ matchTime--;
+ changeTime--;
+}
+
+function startGame(){
+ clearInterval(t);
+ b=0;r=0;
+ blu.textContent='0'; rossi.textContent='0';
+ log.innerHTML='';
+ matchTime=900; changeTime=180;
+ last=0;
+ setBall(0);
+ addLog('Inizio partita con Pallone n.4');
+ tick();
+ t=setInterval(tick,1000);
+}
+function stopGame(){clearInterval(t);}
+</script>
+</body></html>
