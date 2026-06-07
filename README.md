@@ -1,0 +1,1 @@
+{"name":"Multiball Cup","short_name":"Multiball","start_url":"./","display":"standalone","background_color":"#0d47a1","theme_color":"#0d47a1"}
