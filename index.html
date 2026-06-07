@@ -1,0 +1,28 @@
+<!doctype html><html><head>
+<meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Multiball Cup</title><link rel='manifest' href='manifest.json'>
+<style>body{background:#0d47a1;color:white;font-family:Arial;text-align:center}img{width:240px;height:240px;object-fit:contain;background:#fff}</style>
+</head><body>
+<h1>🏆 Multiball Cup</h1>
+<img id='img'><h2 id='name'>Prima estrazione al 3° minuto</h2>
+<div>Cambio palla: <span id='c'>03:00</span></div>
+<div>Partita: <span id='m'>15:00</span></div>
+<button onclick='start()'>Avvia</button>
+<button onclick='draw()'>Estrai Subito</button>
+<script>
+const b=[
+['Pallone calcio n.4','assets/calcio4.png'],
+['Pallone calcio n.5','assets/calcio5.jpg'],
+['Mini-pallone','assets/mini.jpg'],
+['Palla rugby','assets/rugby.jpg'],
+['Super Santos','assets/santos.jpg'],
+['Palla gigante','assets/gigante.jpg']
+];
+let last=-1,cs=180,ms=900,t;
+function f(x){return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0')}
+function pick(){let i;do{i=Math.floor(Math.random()*b.length)}while(i===last&&b.length>1);last=i;img.src=b[i][1];name.innerText=b[i][0];if(speechSynthesis)speechSynthesis.speak(new SpeechSynthesisUtterance(b[i][0]));}
+function draw(){pick();cs=180}
+function tick(){c.textContent=f(cs);m.textContent=f(ms);if(cs<=0){pick();cs=180} if(ms<=0){clearInterval(t);alert('Fine partita');return;} cs--;ms--;}
+function start(){clearInterval(t);cs=180;ms=900;name.innerText='Prima estrazione al 3° minuto';img.removeAttribute('src');t=setInterval(tick,1000);}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js')}
+</script></body></html>
